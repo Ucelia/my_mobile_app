@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -6,6 +7,26 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
+  DateTime? _date;
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  Future<Null> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _date ?? DateTime(DateTime.now().year - 50),
+      firstDate: DateTime(DateTime.now().year - 100),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _date) {
+      setState(() {
+        _date = picked;
+      });
+    }
+  }
 
   String _selectedDrawerItem = 'Sign Up';
 
@@ -30,6 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
       drawer: Drawer(
         child: ListView(
+          key: _formKey,
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
@@ -84,16 +106,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
               'Sign Up',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Email'),
+            TextFormField(
+              controller: _usernameController,
+              decoration: InputDecoration(labelText: 'Username'),
+              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a username';
+                }
+                return null;
+              },
+
             ),
-            TextField(
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Email'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your email';
+                }
+                if (!value.contains('@')) {
+                  return 'Please enter a valid email';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Confirm Password'),
-              obscureText: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -104,5 +152,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

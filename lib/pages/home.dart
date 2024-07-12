@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
+
+  final Function toggleTheme;
+  final bool isDarkMode;
+  Home({required this.toggleTheme, required this.isDarkMode});
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
+
 
   void _onItemTapped(int index, String route) {
     setState(() {
@@ -15,13 +21,65 @@ class _HomeState extends State<Home> {
     Navigator.pushNamed(context, route);
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
         centerTitle: true,
+        actions: [
+          Switch(
+            value: widget.isDarkMode,
+            onChanged: (value) {
+              widget.toggleTheme();
+            },
+          ),
+        ],
       ),
+
+      //body: _selectedIndex,
+      bottomNavigationBar: BottomNavigationBar(
+        items:  const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.login),
+            label: 'SignIn',
+
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.app_registration),
+            label: 'SignUp',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calculate),
+            label: 'Calculator',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        unselectedItemColor: Colors.green[900],
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              _onItemTapped(index, '/');
+              break;
+            case 1:
+              _onItemTapped(index, '/signIn');
+              break;
+            case 2:
+              _onItemTapped(index, '/signUp');
+              break;
+            case 3:
+              _onItemTapped(index, '/calculator');
+              break;
+          }
+        },
+      ),
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -114,17 +172,17 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.symmetric(vertical: 16.0),
               ),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/signUp');
-              },
-              child: Text('Learn More'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                backgroundColor: Colors.grey,
-              ),
-            ),
+            // SizedBox(height: 20.0),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.pushNamed(context, '/signUp');
+            //   },
+            //   child: Text('Learn More'),
+            //   style: ElevatedButton.styleFrom(
+            //     padding: EdgeInsets.symmetric(vertical: 16.0),
+            //     backgroundColor: Colors.grey,
+            //   ),
+            // ),
           ],
         ),
       ),
